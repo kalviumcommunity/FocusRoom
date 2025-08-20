@@ -1,7 +1,12 @@
 import React from "react";
+import PomodoroTimer from "../components/PomodoroTimer";
 
 function Dashboard() {
-  return <div>This is the dashboard</div>;
+  return (
+    <div>
+      <PomodoroTimer />
+    </div>
+  );
 }
 
 export default Dashboard;
