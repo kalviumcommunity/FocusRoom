@@ -10,10 +10,17 @@ import {
   Target,
 } from "lucide-react";
 import { useUser } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const [isHovered, setIsHovered] = useState(false);
   const { googleLogin } = useUser();
+  const navigate = useNavigate();
+
+  const loginWithGoogle = async () => {
+    await googleLogin();
+    navigate("/dashboard");
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
@@ -72,7 +79,7 @@ const LandingPage = () => {
 
             {/* Custom Google Login Button */}
             <button
-              onClick={googleLogin}
+              onClick={loginWithGoogle}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               className="group relative inline-flex items-center gap-4 bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl"
@@ -274,7 +281,7 @@ const LandingPage = () => {
           </p>
 
           <button
-            onClick={googleLogin}
+            onClick={loginWithGoogle}
             className="group inline-flex items-center gap-3 bg-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-red-600 hover:scale-105 hover:shadow-2xl"
           >
             Get Started Free
