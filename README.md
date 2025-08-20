@@ -4,7 +4,7 @@
 
 **FocusRoom** is a web-based productivity platform that helps organizations and teams stay focused, manage tasks, and track productivity using the **Pomodoro technique**.
 
-Unlike regular Pomodoro apps designed for individuals, TeamTempo focuses on **collaboration**:
+Unlike regular Pomodoro apps designed for individuals, FocusRoom focuses on **collaboration**:
 
 - Create or join organization rooms with a code
 - Track live focus sessions of all team members
@@ -52,7 +52,7 @@ Unlike regular Pomodoro apps designed for individuals, TeamTempo focuses on **co
 ## 📂 Project Structure
 
 ```
-/TeamTempo
+/FocusRoom
 ├── /public          # Static assets
 ├── /src
 │   ├── /components   # Reusable UI components
