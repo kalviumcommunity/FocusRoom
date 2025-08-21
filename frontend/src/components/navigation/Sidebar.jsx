@@ -57,8 +57,6 @@ const Sidebar = ({ currentRoute = "dashboard" }) => {
           })}
         </ul>
       </nav>
-
-      
     </div>
   );
 };

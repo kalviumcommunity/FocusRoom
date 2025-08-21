@@ -4,18 +4,23 @@ import Topbar from "./components/navigation/Topbar";
 
 const Layout = ({ children, currentRoute = "dashboard", user = null }) => {
   const location = useLocation();
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Topbar - Full Width */}
-      <Topbar user={user} />
+    <div className="h-screen flex flex-col">
+      {/* Topbar - Fixed height, does not scroll */}
+      <div className="flex-shrink-0">
+        <Topbar user={user} />
+      </div>
 
-      {/* Content Area with Sidebar and Main */}
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <Sidebar currentRoute={location.pathname} />
+      {/* Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - Fixed width, does not scroll */}
+        <div className="w-64 flex-shrink-0">
+          <Sidebar currentRoute={location.pathname} />
+        </div>
 
-        {/* Main Content Area - Scrollable */}
-        <main className="flex-1 overflow-auto">
+        {/* Main Content - Only this scrolls */}
+        <main className="flex-1 overflow-y-auto bg-gray-50">
           <div className="p-6">{children}</div>
         </main>
       </div>
