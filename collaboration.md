@@ -1,139 +1,81 @@
-Collaboration Report
+# 🤝 Collaboration Report
 
 This document highlights the contributions, challenges, and solutions from our team during the project development process.
 
-Team Member: Nidhish Agarwal
-
-📧 Email: nidhish.agarwal@kalvium.community
-
-Contributions
-
-Initial Design:
-
-Created the first version of the Low-Level Design (LLD), which was later refined and updated by teammate Anuj.
-
-Frontend Development:
-
-Set up the React application from scratch.
-
-Built the navigation page and integrated authentication using Firebase.
-
-Implemented protected routes to ensure secure access.
-
-Designed the layout with sidebar and topbar:
-
-Sidebar: implemented navigation across pages.
-
-Topbar: added a user profile logo with a dropdown card including the logout option.
-
-Backend & Firebase:
-
-Configured the Firebase server and linked it with authentication.
-
-Dashboard Development:
-
-Built the Pomodoro Clock, which:
-
-Tracks Pomodoro session times.
-
-Fetches the latest history from Firebase on page load.
-
-Stores session data and updates statistics.
-
-Created a dashboard to display statistics related to Pomodoro sessions.
-
-Challenges Faced
-
-Design Iterations:
-
-The first version of the LLD needed refinement to align with the team’s evolving vision.
-
-Collaborated with Anuj to improve the design while maintaining clarity.
-
-Authentication Setup:
-
-Faced difficulties with Firebase authentication flow and protected routes.
-
-Solved by debugging route guards and restructuring the authentication context.
-
-Pomodoro-Firebase Integration:
-
-Challenge: Fetching the latest Pomodoro history and syncing real-time updates.
-
-Overcame by structuring Firestore queries efficiently and implementing proper state management.
-
-Learnings & Outcomes
-
-Learned how to integrate Firebase authentication seamlessly with React.
-
-Understood how to design and manage protected routes for secure navigation.
-
-Gained experience in real-time database integration with Firebase Firestore.
-
-Improved ability to collaborate on LLDs and adapt to changing requirements.
-
-Team Member: Anuj Goyal
-
-📧 Email: anuj.goyal@kalvium.community
-
-Contributions
-
-LLD & Design:
-
-Created the second version of the Low-Level Design (LLD) with refined structure.
-
-Designed and structured the Figma prototype for the project, enhancing UI clarity.
-
-Frontend Development:
-
-Built the dashboard components with enhanced UI.
-
-Developed the reports section to showcase user productivity data.
-
-Implemented the task management module for creating, updating, and tracking tasks.
-
-Improved the UI/UX across all pages, making the app more user-friendly.
-
-Collaboration & Refinement:
-
-Enhanced existing UI parts to align with modern design practices.
-
-Worked closely with Nidhish to refine workflows, dashboard, and design consistency.
-
-Challenges Faced
-
-UI Enhancements:
-
-Faced difficulty in ensuring a clean and intuitive dashboard design.
-
-Solved by iterating multiple Figma mockups and testing different layouts.
-
-Task Management Module:
-
-Challenge in structuring tasks with different states (pending, completed, ongoing).
-
-Overcame by building a modular React component structure and managing state effectively.
-
-Collaboration with Existing Codebase:
-
-Adapting the second version of LLD into existing implementation required alignment with Nidhish’s initial setup.
-
-Achieved by conducting detailed discussions and ensuring compatibility in flow.
-
-Learnings & Outcomes
-
-Gained practical knowledge in UI/UX design using Figma.
-
-Learned how to enhance existing frontend for usability and design consistency.
-
-Understood state management for task-based systems in React.
-
-Improved ability to collaborate on shared codebases and merge design with development.
-
-🌟 Team Collaboration Highlights
-
-Both members contributed significantly to LLD iterations, ensuring the design evolved to meet the project’s vision.
-
-Nidhish focused on initial setup, Firebase, authentication, and Pomodoro dashboard, while Anuj concentrated on UI/UX, reports, task management, and design enhancements.
-
-The team showed strong collaboration skills by overcoming technical and design challenges through regular discussions and refinements.
+---
+
+## 👨‍💻 Team Member: **Nidhish Agarwal**
+
+📧 **Email:** nidhish.agarwal@kalvium.community  
+
+### ✅ Contributions
+- **Initial Design**
+  - Created the **first version of the Low-Level Design (LLD)**.
+- **Frontend Development**
+  - Set up the **React application** from scratch.  
+  - Built the **navigation page** and integrated **Firebase authentication**.  
+  - Implemented **protected routes** for secure access.  
+  - Designed layout with **sidebar** and **topbar**:
+    - Sidebar: page navigation  
+    - Topbar: user profile dropdown with **logout option**  
+- **Backend & Firebase**
+  - Configured **Firebase server** and linked it with authentication.  
+- **Dashboard Development**
+  - Built the **Pomodoro Clock**:  
+    - Tracks session times  
+    - Fetches **latest history** from Firebase  
+    - Stores session data & updates stats  
+  - Created a **dashboard** for Pomodoro session statistics.  
+
+### ⚡ Challenges Faced
+1. **Design Iterations** – LLD needed refinement; worked with Anuj to improve.  
+2. **Authentication Setup** – Faced Firebase auth & protected route issues, solved by restructuring context.  
+3. **Pomodoro-Firebase Integration** – Faced syncing challenges, solved with optimized Firestore queries & state management.  
+
+### 📚 Learnings & Outcomes
+- Integrated **Firebase authentication** with React.  
+- Understood **protected routes** for security.  
+- Learned **real-time database integration** using Firestore.  
+- Improved ability to **collaborate on LLDs**.  
+
+---
+
+## 👨‍💻 Team Member: **Anuj Goyal**
+
+📧 **Email:** anuj.goyal@kalvium.community  
+
+### ✅ Contributions
+- **LLD & Design**
+  - Created the **second version of the LLD** with refined structure.  
+  - Designed the **Figma prototype**, enhancing UI clarity.  
+- **Frontend Development**
+  - Built **dashboard components** with enhanced UI.  
+  - Developed the **Reports section** for productivity tracking.  
+  - Implemented **Task Management Module** (create, update, track tasks).  
+  - Enhanced **UI/UX** for consistency and usability.  
+- **Collaboration**
+  - Worked closely with Nidhish to align design & functionality.  
+  - Refined workflows, dashboard, and UI elements.  
+
+### ⚡ Challenges Faced
+1. **UI Enhancements** – Needed clean/intuitive design; solved by multiple Figma iterations.  
+2. **Task Management Module** – Faced structuring issues; solved with modular React components & state management.  
+3. **LLD Adaptation** – Integrating refined LLD with existing setup required alignment; solved via detailed discussions.  
+
+### 📚 Learnings & Outcomes
+- Improved **UI/UX design skills** with Figma.  
+- Learned to enhance and **refactor frontend code**.  
+- Understood **state management for tasks** in React.  
+- Strengthened **collaboration & codebase integration skills**.  
+
+---
+
+## 🌟 Team Collaboration Highlights
+- Both contributed to **LLD iterations**, refining the project vision.  
+- **Nidhish** focused on **initial setup, Firebase, authentication, and Pomodoro dashboard**.  
+- **Anuj** focused on **UI/UX, reports, task management, and design enhancements**.  
+- The team collaborated effectively, overcoming technical and design challenges together.  
+
+---
+
+✅ This report reflects the combined efforts, technical contributions, and learning journey of **Anuj Goyal** and **Nidhish Agarwal**.
