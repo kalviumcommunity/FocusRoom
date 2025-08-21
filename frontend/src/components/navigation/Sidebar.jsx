@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, CheckSquare, Users, BarChart3, Settings } from "lucide-react";
+import { Home, CheckSquare, Users, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ currentRoute = "dashboard" }) => {
@@ -27,12 +27,6 @@ const Sidebar = ({ currentRoute = "dashboard" }) => {
       label: "Reports",
       icon: BarChart3,
       path: "/reports",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      path: "/settings",
     },
   ];
 
@@ -64,20 +58,7 @@ const Sidebar = ({ currentRoute = "dashboard" }) => {
         </ul>
       </nav>
 
-      {/* Settings at bottom */}
-      <div className="p-3 border-t border-gray-200">
-        <Link
-          to="/settings"
-          className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-200 ${
-            currentRoute === "settings"
-              ? "bg-gray-900 text-white"
-              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-          }`}
-        >
-          <Settings className="w-5 h-5" />
-          <span className="font-medium">Settings</span>
-        </Link>
-      </div>
+      
     </div>
   );
 };
