@@ -4,6 +4,7 @@ import Layout from "./layout";
 import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import { Routes, Route } from "react-router-dom";
+import TeamPage from "./pages/TeamPage";
 
 function App() {
   return (
@@ -16,6 +17,14 @@ function App() {
             element={
               <Layout>
                 <Dashboard />
+              </Layout>
+            }
+          />
+          <Route
+            path="/team"
+            element={
+              <Layout>
+                <TeamPage />
               </Layout>
             }
           />
