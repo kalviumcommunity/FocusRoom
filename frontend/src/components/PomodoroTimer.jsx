@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Square, RotateCcw } from "lucide-react";
 import { db } from "../config/firebase";
 import {
   addDoc,
   updateDoc,
   doc,
-  query,
-  where,
-  orderBy,
-  limit,
-  getDocs,
   collection,
   Timestamp,
+  increment,
+  getDoc,
 } from "firebase/firestore";
 import { useUser } from "../context/userContext";
 
 const PomodoroTimer = () => {
   const { user } = useUser();
-  ``;
   const userId = user.uid;
-  const teamId = null;
-  const taskId = null;
   const mode = "solo";
   const pairWith = null;
 
@@ -41,85 +35,89 @@ const PomodoroTimer = () => {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    // Fetching the latest pomodoro from the database
-    const restoreLatestSession = async () => {
+    const restoreOrCreateSession = async () => {
       if (!userId) return;
 
       try {
-        const q = query(
-          pomodoroCollection,
-          where("userId", "==", userId),
-          orderBy("createdAt", "desc"),
-          limit(1)
-        );
-        const snapshot = await getDocs(q);
-        console.log("snapshot", snapshot?.docs);
+        // Step 1: Fetch the user document
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
 
-        if (snapshot.empty) {
-          // No session → reset fresh work session
-          setTimeLeft(WORK_TIME);
-          setSessionType("work");
-          setIsActive(false);
-          setIsPaused(false);
-          setCurrentSession(null);
-          return;
-        }
-
-        const docSnap = snapshot.docs[0];
-        const session = { id: docSnap.id, ...docSnap.data() };
-        setCurrentSession(session);
-        setSessionType(session.type);
-
-        if (session.status === "active") {
-          const now = Timestamp.now();
-          const remaining = Math.max(
-            Math.floor((session.endTime.toMillis() - now.toMillis()) / 1000),
-            0
+        if (userSnap.exists() && userSnap.data().currentSessionId) {
+          // Step 2: Fetch the current session from PomodoroSessions
+          const sessionRef = doc(
+            db,
+            "PomodoroSessions",
+            userSnap.data().currentSessionId
           );
+          const sessionSnap = await getDoc(sessionRef);
 
-          if (remaining > 0) {
-            setTimeLeft(remaining);
-            setIsActive(true);
-            setIsPaused(false);
-          } else {
-            // session already expired → mark completed
-            setTimeLeft(WORK_TIME);
-            setIsActive(false);
-            setIsPaused(false);
-            setCurrentSession(null);
-            setSessionType("work");
+          if (sessionSnap.exists()) {
+            const session = { id: sessionSnap.id, ...sessionSnap.data() };
+            setCurrentSession(session);
+            setSessionType(session.type);
+
+            // Step 3: Restore timer based on session status
+            if (session.status === "active") {
+              const now = Timestamp.now();
+              const remaining = Math.max(
+                Math.floor(
+                  (session.endTime.toMillis() - now.toMillis()) / 1000
+                ),
+                0
+              );
+
+              if (remaining > 0) {
+                setTimeLeft(remaining);
+                setIsActive(true);
+                setIsPaused(false);
+                return; // ✅ Done
+              }
+            } else if (session.status === "paused") {
+              const remaining = Math.max(
+                Math.floor(
+                  (session.endTime.toMillis() - session.pausedAt.toMillis()) /
+                    1000
+                ),
+                0
+              );
+              setTimeLeft(remaining);
+              setIsActive(true);
+              setIsPaused(true);
+              return; // ✅ Done
+            }
           }
-        } else if (session.status === "paused") {
-          // Restore paused timer with remaining duration
-          const remaining = Math.max(
-            Math.floor(
-              (session.endTime.toMillis() - session.pausedAt.toMillis()) / 1000
-            ),
-            0
-          );
-          setTimeLeft(remaining);
-          setIsActive(true);
-          setIsPaused(true);
-        } else {
-          // stopped/completed → reset fresh
-          setTimeLeft(WORK_TIME);
-          setIsActive(false);
-          setIsPaused(false);
-          setCurrentSession(null);
-          setSessionType("work");
         }
+
+        // Step 4: No valid current session → create one with your helper
+        await startSession("work"); // 👈 reuse your function
       } catch (error) {
-        console.error("Error restoring latest session:", error);
+        console.error("Error restoring or creating session:", error);
       }
     };
 
-    restoreLatestSession();
+    restoreOrCreateSession();
   }, [userId]);
+
+  const calculateElapsedMinutes = (session, now) => {
+    // if paused/resumed cycle, measure from last resumedAt
+    const startTime = session.resumedAt || session.startTime;
+    const elapsedMs = now.toMillis() - startTime.toMillis();
+    return Math.floor(elapsedMs / 60000); // minutes
+  };
+
+  // USER functions
+  const updateUserStatus = async (updates) => {
+    const userDoc = doc(db, "users", userId);
+    await updateDoc(userDoc, {
+      ...updates,
+      lastUpdated: Timestamp.now(),
+    });
+  };
 
   // Firestore functions
   const createSession = async (sessionData) => {
     try {
-      console.log("Creating session:", sessionData);
       const docRef = await addDoc(pomodoroCollection, sessionData);
       return { id: docRef.id, ...sessionData };
     } catch (error) {
@@ -130,38 +128,11 @@ const PomodoroTimer = () => {
 
   const updateSession = async (sessionId, updates) => {
     try {
-      console.log("Updating session:", sessionId, updates);
       const sessionDoc = doc(db, "PomodoroSessions", sessionId);
       await updateDoc(sessionDoc, updates);
     } catch (error) {
       console.error("Error updating session:", error);
       throw error;
-    }
-  };
-
-  const pauseSession = async (sessionId) => {
-    try {
-      const now = Timestamp.now();
-      console.log("Pausing session:", sessionId, "at", now);
-      await updateSession(sessionId, {
-        pausedAt: now,
-        status: "paused",
-      });
-    } catch (error) {
-      console.error("Error pausing session:", error);
-    }
-  };
-
-  const resumeSession = async (sessionId) => {
-    try {
-      const now = Timestamp.now();
-      console.log("Resuming session:", sessionId, "at", now);
-      await updateSession(sessionId, {
-        resumedAt: now,
-        status: "active",
-      });
-    } catch (error) {
-      console.error("Error resuming session:", error);
     }
   };
 
@@ -200,25 +171,26 @@ const PomodoroTimer = () => {
       : ((BREAK_TIME - timeLeft) / BREAK_TIME) * 100;
 
   // Start a new session
-  const startSession = async () => {
+  const startSession = async (overrideType = null) => {
     try {
+      const typeToUse = overrideType || sessionType;
       const startTime = Timestamp.now();
-      const duration = sessionType === "work" ? WORK_TIME : BREAK_TIME;
+      const duration = typeToUse === "work" ? WORK_TIME : BREAK_TIME;
       const endTime = Timestamp.fromMillis(
         startTime.toMillis() + duration * 1000
       );
 
       const sessionData = {
         userId,
-        teamId,
-        taskId,
+        teamId: null,
+        taskId: null,
         startTime,
         endTime,
         type: sessionType,
-        mode,
-        pairWith,
+        mode: "solo",
+        pairWith: null,
         status: "active",
-        duration: duration,
+        duration,
         createdAt: Timestamp.now(),
       };
 
@@ -227,7 +199,11 @@ const PomodoroTimer = () => {
       setIsActive(true);
       setIsPaused(false);
 
-      console.log("Session started successfully:", session.id);
+      // update user status
+      await updateUserStatus({
+        status: "active",
+        currentSessionId: session.id,
+      });
     } catch (error) {
       console.error("Error starting session:", error);
       // Handle error - maybe show a toast notification
@@ -236,70 +212,88 @@ const PomodoroTimer = () => {
 
   // Pause current session
   const pauseCurrentSession = async () => {
-    if (currentSession) {
-      try {
-        await pauseSession(currentSession.id);
-        setIsPaused(true);
-        console.log("Session paused successfully");
-      } catch (error) {
-        console.error("Error pausing session:", error);
-      }
+    if (!currentSession) return;
+    try {
+      const now = Timestamp.now();
+      const elapsedMinutes = calculateElapsedMinutes(currentSession, now);
+
+      await updateSession(currentSession.id, {
+        pausedAt: now,
+        status: "paused",
+      });
+
+      setIsPaused(true);
+      await updateUserStatus({
+        status: "paused",
+        totalMinutesToday: increment(elapsedMinutes),
+      });
+    } catch (error) {
+      console.error("Error pausing session:", error);
     }
   };
 
   // Resume paused session
   const resumeCurrentSession = async () => {
-    if (currentSession) {
-      try {
-        await resumeSession(currentSession.id);
-        setIsPaused(false);
-        console.log("Session resumed successfully");
-      } catch (error) {
-        console.error("Error resuming session:", error);
-      }
+    if (!currentSession) return;
+    try {
+      const now = Timestamp.now();
+      await updateSession(currentSession.id, {
+        resumedAt: now,
+        status: "active",
+      });
+      setIsPaused(false);
+      await updateUserStatus({ status: "active" });
+    } catch (error) {
+      console.error("Error resuming session:", error);
     }
   };
 
   // Handle session completion
   const handleSessionComplete = async () => {
-    if (currentSession) {
-      try {
-        const actualEndTime = Timestamp.now();
-        await updateSession(currentSession.id, {
-          actualEndTime,
-          status: "completed",
-          completedAt: actualEndTime,
-        });
+    if (!currentSession) return;
+    try {
+      const actualEndTime = Timestamp.now();
+      const elapsedMinutes = calculateElapsedMinutes(
+        currentSession,
+        actualEndTime
+      );
 
-        setIsActive(false);
-        setIsPaused(false);
+      await updateSession(currentSession.id, {
+        actualEndTime,
+        status: "completed",
+        completedAt: actualEndTime,
+      });
 
-        if (sessionType === "work") {
-          setSessionType("break");
-          setTimeLeft(BREAK_TIME);
+      await updateUserStatus({
+        status: sessionType === "work" ? "break" : "idle",
+        currentSessionId: null,
+        totalSessionsToday: increment(1),
+        totalMinutesToday: increment(elapsedMinutes),
+      });
 
-          console.log("Work session completed, starting break...");
+      setIsActive(false);
+      setIsPaused(false);
+      setCurrentSession(null);
 
-          // Auto-start break after 2 seconds
-          setTimeout(async () => {
-            try {
-              await autoStartBreak();
-            } catch (error) {
-              console.error("Error auto-starting break:", error);
-            }
-          }, 2000);
-        } else {
-          // Break completed, ready for work
-          setSessionType("work");
-          setTimeLeft(WORK_TIME);
-          console.log("Break session completed, ready for work");
-        }
+      if (sessionType === "work") {
+        setSessionType("break");
+        setTimeLeft(BREAK_TIME);
 
-        setCurrentSession(null);
-        console.log("Session completed successfully");
-      } catch (error) {
-        console.error("Error completing session:", error);
+        // Auto-start break after 2 seconds
+        setTimeout(async () => {
+          try {
+            await autoStartBreak();
+          } catch (error) {
+            console.error("Error auto-starting break:", error);
+          }
+        }, 2000);
+      } else {
+        // Break completed, ready for work
+        setSessionType("work");
+        setTimeLeft(WORK_TIME);
       }
+    } catch (error) {
+      console.error("Error completing session:", error);
     }
   };
 
@@ -313,13 +307,13 @@ const PomodoroTimer = () => {
 
       const breakSessionData = {
         userId,
-        teamId,
-        taskId,
+        teamId: null,
+        taskId: null,
         startTime,
         endTime,
         type: "break",
-        mode,
-        pairWith,
+        mode: "solo",
+        pairWith: null,
         status: "active",
         duration: BREAK_TIME,
         createdAt: Timestamp.now(),
@@ -330,7 +324,10 @@ const PomodoroTimer = () => {
       setIsActive(true);
       setIsPaused(false);
 
-      console.log("Break session started automatically:", breakSession.id);
+      await updateUserStatus({
+        status: "break",
+        currentSessionId: breakSession.id,
+      });
     } catch (error) {
       console.error("Error auto-starting break:", error);
       throw error;
@@ -342,12 +339,20 @@ const PomodoroTimer = () => {
     if (currentSession) {
       try {
         const stoppedAt = Timestamp.now();
+        const elapsedMinutes = calculateElapsedMinutes(
+          currentSession,
+          stoppedAt
+        );
         await updateSession(currentSession.id, {
           actualEndTime: stoppedAt,
           status: "stopped",
           stoppedAt,
         });
-        console.log("Session stopped successfully");
+        await updateUserStatus({
+          status: "idle",
+          currentSessionId: null,
+          totalMinutesToday: increment(elapsedMinutes),
+        });
       } catch (error) {
         console.error("Error stopping session:", error);
       }
@@ -364,7 +369,6 @@ const PomodoroTimer = () => {
     await stopSession();
     setSessionType("work");
     setTimeLeft(WORK_TIME);
-    console.log("Reset to work session");
   };
 
   // Handle main button click
@@ -444,8 +448,8 @@ const PomodoroTimer = () => {
               x2="100%"
               y2="100%"
             >
-              <stop offset="0%" stopColor="#FE7976" />
-              <stop offset="100%" stopColor="#FFFFFF" />
+              <stop offset="0%" stopColor="#e77175" />
+              <stop offset="100%" stopColor="#e3cccc" />
             </linearGradient>
 
             {/* Mask that reveals completed portion */}

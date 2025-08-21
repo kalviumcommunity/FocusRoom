@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, CheckSquare, Timer, BarChart3, Settings } from "lucide-react";
+import { Home, CheckSquare, Users, BarChart3, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ currentRoute = "dashboard" }) => {
@@ -17,10 +17,10 @@ const Sidebar = ({ currentRoute = "dashboard" }) => {
       path: "/tasks",
     },
     {
-      id: "pomodoro",
-      label: "Pomodoro",
-      icon: Timer,
-      path: "/pomodoro",
+      id: "team",
+      label: "Team",
+      icon: Users,
+      path: "/team",
     },
     {
       id: "reports",

@@ -7,6 +7,8 @@ import {
   where,
   getDocs,
   Timestamp,
+  getDoc,
+  doc,
 } from "firebase/firestore";
 import { useUser } from "../context/userContext";
 
@@ -19,29 +21,7 @@ const PomodoroStats = () => {
   });
 
   const { user } = useUser();
-  const userId = user.uid;
-
-  const pomodoroCollection = collection(db, "PomodoroSessions");
-
-  // Helper function to get start and end of today
-  const getTodayRange = () => {
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1
-    );
-
-    return {
-      start: Timestamp.fromDate(startOfDay),
-      end: Timestamp.fromDate(endOfDay),
-    };
-  };
+  const userId = user?.uid;
 
   // Helper function to get start and end of this week
   const getWeekRange = () => {
@@ -62,24 +42,31 @@ const PomodoroStats = () => {
       end: Timestamp.fromDate(endOfWeek),
     };
   };
+
   // Fetch user stats from Firestore
   const fetchUserStats = async () => {
     try {
+      if (!userId) return;
+
       setStats((prev) => ({ ...prev, loading: true }));
 
-      const today = getTodayRange();
+      // 1️⃣ Get user doc for today's totals
+      const userRef = doc(db, "Users", userId);
+      const userSnap = await getDoc(userRef);
+
+      let sessionsCompletedToday = 0;
+      let focusHoursToday = 0;
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        sessionsCompletedToday = data.totalSessionsToday || 0;
+        focusHoursToday =
+          Math.round((data.totalMinutesToday / 60) * 10) / 10 || 0;
+      }
+
+      // 2️⃣ Query for this week's completed sessions
       const week = getWeekRange();
-
-      // Query for today's completed sessions
-      const todayQuery = query(
-        pomodoroCollection,
-        where("userId", "==", userId),
-        where("status", "==", "completed"),
-        where("completedAt", ">=", today.start),
-        where("completedAt", "<", today.end)
-      );
-
-      // Query for this week's completed sessions
+      const pomodoroCollection = collection(db, "PomodoroSessions");
       const weekQuery = query(
         pomodoroCollection,
         where("userId", "==", userId),
@@ -88,39 +75,16 @@ const PomodoroStats = () => {
         where("completedAt", "<", week.end)
       );
 
-      const [todaySnapshot, weekSnapshot] = await Promise.all([
-        getDocs(todayQuery),
-        getDocs(weekQuery),
-      ]);
-
-      console.log("todaySnapshot", todaySnapshot, "weekSnapshot", weekSnapshot);
-
-      const todaySessions = todaySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const weekSessions = weekSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      // Calculate stats
-      const workSessionsToday = todaySessions.filter(
+      const weekSnapshot = await getDocs(weekQuery);
+      const weekSessions = weekSnapshot.docs.map((doc) => doc.data());
+      const totalSessionsThisWeek = weekSessions.filter(
         (session) => session.type === "work"
-      );
-      const totalWorkMinutesToday = workSessionsToday.reduce(
-        (total, session) => {
-          return total + (session.duration || 1500); // Default 25 minutes if duration not set
-        },
-        0
-      );
+      ).length;
 
       setStats({
-        sessionsCompletedToday: workSessionsToday.length,
-        focusHoursToday: Math.round((totalWorkMinutesToday / 60) * 10) / 10, // Round to 1 decimal
-        totalSessionsThisWeek: weekSessions.filter(
-          (session) => session.type === "work"
-        ).length,
+        sessionsCompletedToday,
+        focusHoursToday,
+        totalSessionsThisWeek,
         loading: false,
       });
     } catch (error) {
@@ -136,7 +100,6 @@ const PomodoroStats = () => {
     const interval = setInterval(fetchUserStats, 10 * 60 * 1000);
     return () => clearInterval(interval);
   }, [userId]);
-
   const StatCard = ({ icon: Icon, title, value, subtitle, color = "red" }) => {
     const colorClasses = {
       red: "bg-red-50 border-red-200 text-red-600",
@@ -156,13 +119,13 @@ const PomodoroStats = () => {
           </div>
         </div>
         <div className="space-y-1">
-          <p className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900">
             {stats.loading ? (
               <div className="w-12 h-6 bg-gray-200 rounded animate-pulse"></div>
             ) : (
               value
             )}
-          </p>
+          </div>
           <p className="text-sm font-medium text-gray-700">{title}</p>
           {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
         </div>
