@@ -42,7 +42,7 @@ This document highlights the contributions, challenges, and solutions from our t
 
 ## 👨‍💻 Team Member: **Anuj Goyal**
 
-📧 **Email:** anuj.goyal@kalvium.community  
+📧 **Email:** anuj.goyal.s63@kalvium.community  
 
 ### ✅ Contributions
 - **LLD & Design**
