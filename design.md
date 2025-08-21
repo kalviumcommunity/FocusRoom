@@ -1,4 +1,4 @@
-# 📄 Low Level Design (LLD) – Pomodoro Productivity Tracker for Organizations
+# 📄(LLD) – Pomodoro Productivity Tracker for Organizations
 
 ## 🎯 Aim of the Project
 
