@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Landing animations and utilities */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) skewX(-20deg); }
+  100% { transform: translateX(200%) skewX(-20deg); }
+}
+
+@keyframes revealUp {
+  0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-float-slow { animation: floatY 8s ease-in-out infinite; }
+.animate-float { animation: floatY 6s ease-in-out infinite; }
+.animate-float-fast { animation: floatY 4s ease-in-out infinite; }
+.animate-gradient { background-size: 200% 200%; animation: gradientShift 12s ease infinite; }
+
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: "";
+  position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shine 2.5s ease-in-out infinite;
+}
+
+.reveal-up { opacity: 0; animation: revealUp 0.6s ease forwards; }

@@ -56,22 +56,23 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative px-8 py-20">
+      <div className="relative px-8 pt-16 pb-24">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full opacity-30 animate-float-fast" style={{background:"radial-gradient(closest-side, rgba(255,255,255,0.06), transparent)"}} />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent leading-tight">
+            <h1 className="reveal-up text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent leading-tight tracking-tight">
               Focus. Collaborate.
               <br />
               <span className="text-red-400">Achieve.</span>
             </h1>
 
-            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="reveal-up [animation-delay:120ms] text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
               Boost your team's productivity with our Pomodoro-based tracker.
               Manage tasks, track progress, and collaborate seamlessly in
               real-time.
@@ -82,7 +83,7 @@ const LandingPage = () => {
               onClick={loginWithGoogle}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="group relative inline-flex items-center gap-4 bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl"
+              className="btn-shine group relative inline-flex items-center gap-4 bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-gray-100 hover:scale-105 hover:shadow-2xl"
             >
               <svg className="w-6 h-6" viewBox="0 0 24 24">
                 <path
@@ -113,7 +114,7 @@ const LandingPage = () => {
 
           {/* Feature Preview Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-20">
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
+            <div className="reveal-up bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
               <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-500/30 transition-colors">
                 <Clock className="w-6 h-6 text-red-400" />
               </div>
@@ -126,7 +127,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
+            <div className="reveal-up [animation-delay:120ms] bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
               <div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-500/30 transition-colors">
                 <Users className="w-6 h-6 text-pink-400" />
               </div>
@@ -137,7 +138,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
+            <div className="reveal-up [animation-delay:240ms] bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:bg-gray-800/70 transition-all duration-300 group">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
                 <BarChart3 className="w-6 h-6 text-blue-400" />
               </div>
@@ -270,7 +271,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="px-8 py-20 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-blue-500/10">
+      <section className="px-8 py-20 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-blue-500/10 animate-gradient">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">
             Ready to Boost Your Productivity?
@@ -282,7 +283,7 @@ const LandingPage = () => {
 
           <button
             onClick={loginWithGoogle}
-            className="group inline-flex items-center gap-3 bg-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-red-600 hover:scale-105 hover:shadow-2xl"
+            className="btn-shine group inline-flex items-center gap-3 bg-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:bg-red-600 hover:scale-105 hover:shadow-2xl"
           >
             Get Started Free
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
