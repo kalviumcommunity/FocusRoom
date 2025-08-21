@@ -22,17 +22,24 @@ This document highlights the contributions, challenges, and solutions from our t
   - Designed the layout with **sidebar** and **topbar**.
   - Sidebar: implemented navigation across pages.
   - Topbar: added a user profile logo with a dropdown card that includes the **logout option**.
+  - Teams Page: Added functionality to create different teams and ability to join those teams.
 
 - **Backend & Firebase:**
 
   - Configured the Firebase server and linked it with authentication.
 
 - **Dashboard Development:**
+
   - Built the **Pomodoro Clock**, which:
     - Tracks Pomodoro session times.
     - Fetches the **latest history** from Firebase on page load.
     - Stores session data and updates statistics.
   - Created a dashboard to display **stats related to different Pomodoro sessions**.
+
+- **Team Page Development:**
+  - Built the **Team Functionality**, which:
+    - Grants ability to create a new team and join other teams based on unique join codes.
+    - Fetches the all the **users Data** and display their current status and their daily stats.
 
 ---
 
@@ -60,5 +67,6 @@ This document highlights the contributions, challenges, and solutions from our t
 - Understood how to design and manage **protected routes** for secure navigation.
 - Gained experience in **real-time database integration** with Firebase Firestore.
 - Improved ability to **collaborate on LLDs** and adapt to changing requirements.
+- Learnt how unique code based rooms are created.
 
 ---
