@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, CheckSquare, Users, BarChart3, Settings } from "lucide-react";
+import { Home, CheckSquare, Users, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ currentRoute = "dashboard" }) => {
@@ -27,12 +27,6 @@ const Sidebar = ({ currentRoute = "dashboard" }) => {
       label: "Reports",
       icon: BarChart3,
       path: "/reports",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      path: "/settings",
     },
   ];
 
